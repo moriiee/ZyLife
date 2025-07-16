@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BitLife Clone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #000;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .character-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .character-details {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stats-container {
+            background: #2d2d2d;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .stat {
+            text-align: center;
+            background: #3a3a3a;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .stat-icon {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .life-details {
+            background: #333;
+            padding: 12px 15px;
+            border-bottom: 1px solid #444;
+            font-size: 13px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .main-scenario {
+            padding: 20px;
+            background: #2d2d2d;
+            margin: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .scenario-text {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .choice-btn {
+            background: #4a5568;
+            border: none;
+            padding: 15px 18px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            line-height: 1.3;
+        }
+
+        .choice-btn:hover {
+            background: #5a6578;
+            transform: translateX(3px);
+        }
+
+        .age-up-section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .age-up-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            border: none;
+            padding: 18px 25px;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .age-up-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .activity-btn {
+            background: #3a3a3a;
+            border: none;
+            padding: 15px 8px;
+            border-radius: 12px;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-btn:hover {
+            background: #4a4a4a;
+            transform: scale(1.05);
+        }
+
+        .activity-icon {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .death-screen {
+            background: #1a1a1a;
+            padding: 30px 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .death-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #ff6b6b;
+        }
+
+        .death-details {
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .life-summary {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .final-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .final-stat {
+            background: #3a3a3a;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 20px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            z-index: 1000;
+            max-width: 350px;
+            text-align: center;
+            border: 1px solid #444;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .criminal-record {
+            background: #4a1a1a;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .relationship-info {
+            background: #1a3a1a;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 8px 15px;
+            font-size: 13px;
+            text-align: center;
+            border: 1px solid #48bb78;
+        }
+
+        .job-info {
+            background: #3a2a1a;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 8px 15px;
+            font-size: 13px;
+            text-align: center;
+            border: 1px solid #ed8936;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="gameContent"></div>
+    </div>
+
+    <script>
+        class BitLifeGame {
+            constructor() {
+                this.character = {
+                    firstName: '',
+                    lastName: '',
+                    age: 0,
+                    gender: '',
+                    happiness: 50,
+                    health: 100,
+                    smarts: 50,
+                    looks: 50,
+                    money: 0,
+                    
+                    // Life status
+                    job: null,
+                    jobTitle: '',
+                    salary: 0,
+                    education: 'None',
+                    relationshipStatus: 'Single',
+                    partner: null,
+                    children: [],
+                    
+                    // Family
+                    parents: { mother: null, father: null },
+                    siblings: [],
+                    
+                    // Location
+                    country: 'United States',
+                    city: 'New York',
+                    
+                    // Records
+                    criminalRecord: [],
+                    achievements: [],
+                    
+                    // Flags
+                    died: false,
+                    deathCause: null,
+                    inSchool: true,
+                    graduated: false,
+                    hasLicense: false,
+                    
+                    // Relationships
+                    relationships: new Map()
+                };
+                
+                this.currentScenario = null;
+                this.processing = false;
+                
+                this.jobDatabase = {
+                    noEducation: [
+                        { title: 'Cashier', salary: 25000, requirements: { age: 16 } },
+                        { title: 'Janitor', salary: 28000, requirements: { age: 18 } },
+                        { title: 'Fast Food Worker', salary: 22000, requirements: { age: 16 } },
+                        { title: 'Retail Associate', salary: 26000, requirements: { age: 16 } },
+                        { title: 'Security Guard', salary: 32000, requirements: { age: 21 } },
+                        { title: 'Warehouse Worker', salary: 35000, requirements: { age: 18 } }
+                    ],
+                    highSchool: [
+                        { title: 'Bank Teller', salary: 38000, requirements: { age: 18, smarts: 40 } },
+                        { title: 'Administrative Assistant', salary: 42000, requirements: { age: 18, smarts: 45 } },
+                        { title: 'Sales Representative', salary: 45000, requirements: { age: 21, looks: 40 } },
+                        { title: 'Police Officer', salary: 55000, requirements: { age: 21, health: 60 } }
+                    ],
+                    college: [
+                        { title: 'Accountant', salary: 65000, requirements: { age: 22, smarts: 70 } },
+                        { title: 'Software Developer', salary: 85000, requirements: { age: 22, smarts: 80 } },
+                        { title: 'Marketing Manager', salary: 75000, requirements: { age: 25, smarts: 65, looks: 50 } },
+                        { title: 'Teacher', salary: 48000, requirements: { age: 22, smarts: 60 } },
+                        { title: 'Nurse', salary: 70000, requirements: { age: 22, smarts: 65, health: 60 } },
+                        { title: 'Lawyer', salary: 120000, requirements: { age: 25, smarts: 85 } },
+                        { title: 'Doctor', salary: 200000, requirements: { age: 28, smarts: 90, health: 70 } }
+                    ]
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.generateCharacter();
+                this.render();
+            }
+
+            generateCharacter() {
+                const maleNames = ['James', 'Robert', 'John', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Christopher'];
+                const femaleNames = ['Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen'];
+                const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+                
+                this.character.gender = Math.random() > 0.5 ? 'Male' : 'Female';
+                const namePool = this.character.gender === 'Male' ? maleNames : femaleNames;
+                
+                this.character.firstName = namePool[Math.floor(Math.random() * namePool.length)];
+                this.character.lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                
+                // Realistic starting stats
+                this.character.happiness = this.randomBetween(40, 80);
+                this.character.health = this.randomBetween(85, 100);
+                this.character.smarts = this.randomBetween(25, 75);
+                this.character.looks = this.randomBetween(25, 75);
+                
+                this.generateFamily();
+            }
+
+            generateFamily() {
+                const motherNames = ['Linda', 'Patricia', 'Susan', 'Jessica', 'Sarah', 'Karen', 'Nancy', 'Lisa', 'Betty', 'Helen'];
+                const fatherNames = ['Robert', 'John', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Christopher', 'Daniel'];
+                
+                this.character.parents.mother = {
+                    name: motherNames[Math.floor(Math.random() * motherNames.length)] + ' ' + this.character.lastName,
+                    age: this.randomBetween(22, 45),
+                    relationship: this.randomBetween(40, 90),
+                    alive: true
+                };
+                
+                this.character.parents.father = {
+                    name: fatherNames[Math.floor(Math.random() * fatherNames.length)] + ' ' + this.character.lastName,
+                    age: this.randomBetween(22, 45),
+                    relationship: this.randomBetween(40, 90),
+                    alive: true
+                };
+                
+                // Add parents to relationships map
+                this.character.relationships.set('mother', this.character.parents.mother.relationship);
+                this.character.relationships.set('father', this.character.parents.father.relationship);
+            }
+
+            randomBetween(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            render() {
+                if (this.character.died) {
+                    this.renderDeathScreen();
+                    return;
+                }
+
+                const gameContent = document.getElementById('gameContent');
+                
+                gameContent.innerHTML = `
+                    ${this.renderHeader()}
+                    ${this.renderStats()}
+                    ${this.renderLifeDetails()}
+                    ${this.renderRelationshipInfo()}
+                    ${this.renderJobInfo()}
+                    ${this.renderMainContent()}
+                `;
+            }
+
+            renderHeader() {
+                return `
+                    <div class="header">
+                        <div class="character-name">${this.character.firstName} ${this.character.lastName}</div>
+                        <div class="character-details">${this.character.gender}, Age ${this.character.age} • ${this.character.city}, ${this.character.country}</div>
+                    </div>
+                `;
+            }
+
+            renderStats() {
+                return `
+                    <div class="stats-container">
+                        <div class="stats-grid">
+                            <div class="stat">
+                                <div class="stat-icon">😊</div>
+                                <div class="stat-label">Happiness</div>
+                                <div class="stat-value">${this.character.happiness}%</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-icon">❤️</div>
+                                <div class="stat-label">Health</div>
+                                <div class="stat-value">${this.character.health}%</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-icon">🧠</div>
+                                <div class="stat-label">Smarts</div>
+                                <div class="stat-value">${this.character.smarts}%</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-icon">✨</div>
+                                <div class="stat-label">Looks</div>
+                                <div class="stat-value">${this.character.looks}%</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderLifeDetails() {
+                return `
+                    <div class="life-details">
+                        <div class="detail-row">
+                            <span>Net Worth:</span>
+                            <span>$${this.character.money.toLocaleString()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Education:</span>
+                            <span>${this.getEducationStatus()}</span>
+                        </div>
+                        ${this.character.hasLicense ? `
+                            <div class="detail-row">
+                                <span>License:</span>
+                                <span>Driver's License</span>
+                            </div>
+                        ` : ''}
+                        ${this.character.criminalRecord.length > 0 ? `
+                            <div class="detail-row">
+                                <span>Criminal Record:</span>
+                                <span>${this.character.criminalRecord.length} offense(s)</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            renderRelationshipInfo() {
+                if (this.character.relationshipStatus === 'Single') return '';
+                
+                return `
+                    <div class="relationship-info">
+                        💕 ${this.character.relationshipStatus}${this.character.partner ? ` with ${this.character.partner.name}` : ''}
+                    </div>
+                `;
+            }
+
+            renderJobInfo() {
+                if (!this.character.job) return '';
+                
+                return `
+                    <div class="job-info">
+                        💼 ${this.character.jobTitle} • $${this.character.salary.toLocaleString()}/year
+                    </div>
+                `;
+            }
+
+            renderMainContent() {
+                if (this.currentScenario) {
+                    return this.renderScenario();
+                } else {
+                    return this.renderAgeUpScreen();
+                }
+            }
+
+            renderScenario() {
+                const choices = this.currentScenario.choices.map((choice, index) => 
+                    `<button class="choice-btn" onclick="game.makeChoice(${index})">${choice.text}</button>`
+                ).join('');
+
+                return `
+                    <div class="main-scenario">
+                        <div class="scenario-text">${this.currentScenario.text}</div>
+                        <div class="choices">
+                            ${choices}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderAgeUpScreen() {
+                return `
+                    <div class="activities-grid">
+                        ${this.getAvailableActivities().map(activity => 
+                            `<button class="activity-btn" onclick="game.doActivity('${activity.id}')">
+                                <div class="activity-icon">${activity.icon}</div>
+                                <div>${activity.name}</div>
+                            </button>`
+                        ).join('')}
+                    </div>
+                    
+                    <div class="age-up-section">
+                        <button class="age-up-btn" onclick="game.ageUp()">
+                            Age Up
+                        </button>
+                    </div>
+                `;
+            }
+
+            getAvailableActivities() {
+                let activities = [
+                    { id: 'gym', name: 'Gym', icon: '🏋️' },
+                    { id: 'library', name: 'Library', icon: '📚' },
+                    { id: 'walk', name: 'Walk', icon: '🚶' },
+                    { id: 'family', name: 'Family', icon: '👨‍👩‍👧‍👦' }
+                ];
+
+                if (this.character.age >= 16) {
+                    activities.push(
+                        { id: 'job', name: 'Job', icon: '💼' },
+                        { id: 'license', name: 'License', icon: '🚗' }
+                    );
+                }
+
+                if (this.character.age >= 18) {
+                    activities.push(
+                        { id: 'date', name: 'Date', icon: '💕' },
+                        { id: 'nightclub', name: 'Nightclub', icon: '🍺' }
+                    );
+                }
+
+                if (this.character.age >= 21) {
+                    activities.push({ id: 'casino', name: 'Casino', icon: '🎰' });
+                }
+
+                activities.push({ id: 'crime', name: 'Crime', icon: '🔫' });
+
+                return activities;
+            }
+
+            getEducationStatus() {
+                if (this.character.age < 6) return 'Too young for school';
+                if (this.character.age < 18 && this.character.inSchool) return 'In school';
+                if (this.character.age >= 18 && !this.character.graduated) return 'High school dropout';
+                if (this.character.education === 'High School') return 'High school graduate';
+                if (this.character.education === 'College') return 'College graduate';
+                if (this.character.education === 'University') return 'University graduate';
+                return 'No formal education';
+            }
+
+            doActivity(activityId) {
+                if (this.processing) return;
+                
+                switch(activityId) {
+                    case 'gym':
+                        this.doGym();
+                        break;
+                    case 'library':
+                        this.doLibrary();
+                        break;
+                    case 'walk':
+                        this.doWalk();
+                        break;
+                    case 'family':
+                        this.doFamily();
+                        break;
+                    case 'job':
+                        this.doJob();
+                        break;
+                    case 'license':
+                        this.doLicense();
+                        break;
+                    case 'date':
+                        this.doDate();
+                        break;
+                    case 'nightclub':
+                        this.doNightclub();
+                        break;
+                    case 'casino':
+                        this.doCasino();
+                        break;
+                    case 'crime':
+                        this.doCrime();
+                        break;
+                }
+            }
+
+            doGym() {
+                const outcomes = [
+                    {
+                        text: "You had a great workout and feel stronger!",
+                        effects: { health: this.randomBetween(5, 15), looks: this.randomBetween(2, 8), happiness: this.randomBetween(3, 10) }
+                    },
+                    {
+                        text: "You injured yourself while lifting weights.",
+                        effects: { health: -this.randomBetween(5, 15), happiness: -this.randomBetween(5, 10) }
+                    },
+                    {
+                        text: "You had a moderate workout session.",
+                        effects: { health: this.randomBetween(2, 8), happiness: this.randomBetween(1, 5) }
+                    }
+                ];
+                
+                const outcome = outcomes[Math.random() < 0.1 ? 1 : (Math.random() < 0.7 ? 0 : 2)];
+                this.applyEffects(outcome.effects);
+                this.showNotification(outcome.text);
+            }
+
+            doLibrary() {
+                const outcomes = [
+                    {
+                        text: "You spent hours studying and learned a lot!",
+                        effects: { smarts: this.randomBetween(5, 15), happiness: this.randomBetween(2, 8) }
+                    },
+                    {
+                        text: "You fell asleep in the library.",
+                        effects: { health: this.randomBetween(2, 5), happiness: -this.randomBetween(2, 5) }
+                    },
+                    {
+                        text: "You read some interesting books.",
+                        effects: { smarts: this.randomBetween(2, 8), happiness: this.randomBetween(1, 5) }
+                    }
+                ];
+                
+                const outcome = outcomes[Math.random() < 0.15 ? 1 : (Math.random() < 0.7 ? 0 : 2)];
+                this.applyEffects(outcome.effects);
+                this.showNotification(outcome.text);
+            }
+
+            doWalk() {
+                this.currentScenario = {
+                    text: "You're taking a peaceful walk around the neighborhood. The fresh air feels good.",
+                    choices: [
+                        {
+                            text: "Take a longer route through the park",
+                            effects: { health: this.randomBetween(5, 10), happiness: this.randomBetween(5, 10) }
+                        },
+                        {
+                            text: "Walk to the local store",
+                            effects: { health: this.randomBetween(2, 5), happiness: this.randomBetween(2, 5) }
+                        },
+                        {
+                            text: "Head home early",
+                            effects: { health: this.randomBetween(1, 3), happiness: this.randomBetween(1, 3) }
+                        }
+                    ]
+                };
+                this.render();
+            }
+
+            doFamily() {
+                if (this.character.age < 3) {
+                    this.showNotification("You're too young to interact meaningfully with family.");
+                    return;
+                }
+
+                const scenarios = [
+                    {
+                        text: `Your mother wants to spend some quality time with you. She suggests watching a movie together.`,
+                        choices: [
+                            {
+                                text: "Watch the movie with her",
+                                effects: { happiness: this.randomBetween(8, 15) },
+                                relationshipChange: { person: 'mother', change: this.randomBetween(3, 8) }
+                            },
+                            {
+                                text: "Tell her you're too busy",
+                                effects: { happiness: -this.randomBetween(2, 5) },
+                                relationshipChange: { person: 'mother', change: -this.randomBetween(2, 5) }
+                            },
+                            {
+                                text: "Suggest doing something else together",
+                                effects: { happiness: this.randomBetween(5, 12) },
+                                relationshipChange: { person: 'mother', change: this.randomBetween(2, 6) }
+                            }
+                        ]
+                    },
+                    {
+                        text: `Your father is teaching you about ${this.character.age < 16 ? 'life skills' : 'managing money'}.`,
+                        choices: [
+                            {
+                                text: "Listen carefully and ask questions",
+                                effects: { smarts: this.randomBetween(5, 12), happiness: this.randomBetween(3, 8) },
+                                relationshipChange: { person: 'father', change: this.randomBetween(3, 8) }
+                            },
+                            {
+                                text: "Pretend to listen but daydream",
+                                effects: { happiness: this.randomBetween(1, 3) },
+                                relationshipChange: { person: 'father', change: this.randomBetween(-1, 1) }
+                            },
+                            {
+                                text: "Tell him you already know this stuff",
+                                effects: { happiness: -this.randomBetween(2, 5) },
+                                relationshipChange: { person: 'father', change: -this.randomBetween(3, 7) }
+                            }
+                        ]
+                    }
+                ];
+
+                this.currentScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+                this.render();
+            }
+
+            doJob() {
+                if (this.character.job) {
+                    // Work at current job
+                    const performance = Math.random();
+                    let outcome;
+                    
+                    if (performance > 0.8) {
+                        const bonus = Math.floor(this.character.salary * 0.1);
+                        outcome = {
+                            text: "You had an excellent day at work and received a bonus!",
+                            effects: { money: bonus, happiness: this.randomBetween(5, 15) }
+                        };
+                    } else if (performance < 0.2) {
+                        outcome = {
+                            text: "You had a terrible day at work and got yelled at by your boss.",
+                            effects: { happiness: -this.randomBetween(10, 20) }
+                        };
+                    } else {
+                        const dailyPay = Math.floor(this.character.salary / 365);
+                        outcome = {
+                            text: "You had a normal day at work.",
+                            effects: { money: dailyPay, happiness: this.randomBetween(-2, 2) }
+                        };
+                    }
+                    
+                    this.applyEffects(outcome.effects);
+                    this.showNotification(outcome.text);
+                } else {
+                    // Look for a job
+                    this.lookForJob();
+                }
+            }
+
+            lookForJob() {
+                const availableJobs = this.getAvailableJobs();
+                
+                if (availableJobs.length === 0) {
+                    this.showNotification("No jobs are available for you right now. Try improving your education or stats.");
+                    return;
+                }
+                
+                const jobOptions = availableJobs.slice(0, 3).map(job => ({
+                    text: `Apply for ${job.title} ($${job.salary.toLocaleString()}/year)`,
+                    job: job
+                }));
+                
+                this.currentScenario = {
+                    text: "You're looking for a job. Here are some positions you qualify for:",
+                    choices: [
+                        ...jobOptions,
+                        { text: "Don't apply for any jobs right now" }
+                    ]
+                };
+                this.render();
+            }
+
+            getAvailableJobs() {
+                let availableJobs = [];
+                
+                // Add jobs based on education level
+                if (this.character.education === 'College' || this.character.education === 'University') {
+                    availableJobs.push(...this.jobDatabase.college);
+                }
+                
+                if (this.character.graduated || this.character.education === 'High School' || this.character.education === 'College' || this.character.education === 'University') {
+                    availableJobs.push(...this.jobDatabase.highSchool);
+                }
+                
+                availableJobs.push(...this.jobDatabase.noEducation);
+                
+                // Filter by age and stat requirements
+                return availableJobs.filter(job => {
+                    if (job.requirements.age && this.character.age < job.requirements.age) return false;
+                    if (job.requirements.smarts && this.character.smarts < job.requirements.smarts) return false;
+                    if (job.requirements.looks && this.character.looks < job.requirements.looks) return false;
+                    if (job.requirements.health && this.character.health < job.requirements.health) return false;
+                    return true;
+                });
+            }
+
+            doLicense() {
+                if (this.character.hasLicense) {
+                    this.showNotification("You already have your driver's license!");
+                    return;
+                }
+                
+                if (this.character.age < 16) {
+                    this.showNotification("You're too young to get a driver's license!");
+                    return;
+                }
+                
+                this.currentScenario = {
+                    text: "You're at the DMV taking your driving test. The instructor is watching carefully as you navigate through traffic.",
+                    choices: [
+                        {
+                            text: "Drive very carefully and follow all rules",
+                            successChance: 0.8,
+                            effects: { happiness: 20 }
+                        },
+                        {
+                            text: "Drive normally",
+                            successChance: 0.6,
+                            effects: { happiness: 15 }
+                        },
+                        {
+                            text: "Try to impress the instructor with your skills",
+                            successChance: 0.3,
+                            effects: { happiness: this.character.smarts > 70 ? 25 : -10 }
+                        }
+                    ]
+                };
+                this.render();
+            }
+
+            doDate() {
+                if (this.character.relationshipStatus !== 'Single') {
+                    this.spendTimeWithPartner();
+                    return;
+                }
+                
+                const scenarios = [
+                    {
+                        text: "You matched with someone attractive on a dating app. They want to meet for coffee.",
+                        choices: [
+                            {
+                                text: "Meet them for coffee",
+                                successChance: 0.6,
+                                effects: { happiness: 10 }
+                            },
+                            {
+                                text: "Suggest a more interesting first date",
+                                successChance: 0.4,
+                                effects: { happiness: 15 }
+                            },
+                            {
+                                text: "Cancel the date",
+                                effects: { happiness: -5 }
+                            }
+                        ]
+                    },
+                    {
+                        text: "You see someone cute at a bookstore. They're reading the same author you love.",
+                        choices: [
+                            {
+                                text: "Strike up a conversation about the book",
+                                successChance: 0.5,
+                                effects: { happiness: 12 }
+                            },
+                            {
+                                text: "Just smile and walk away",
+                                effects: { happiness: 2 }
+                            },
+                            {
+                                text: "Ask them out directly",
+                                successChance: 0.3,
+                                effects: { happiness: this.character.looks > 60 ? 20 : -5 }
+                            }
+                        ]
+                    }
+                ];
+                
+                this.currentScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+                this.render();
+            }
+
+            spendTimeWithPartner() {
+                const activities = [
+                    {
+                        text: `${this.character.partner.name} wants to go to a fancy restaurant for dinner.`,
+                        choices: [
+                            {
+                                text: "Take them to the expensive restaurant",
+                                effects: { money: -200, happiness: 15 },
+                                relationshipChange: { person: 'partner', change: 8 }
+                            },
+                            {
+                                text: "Suggest cooking dinner together instead",
+                                effects: { money: -30, happiness: 12 },
+                                relationshipChange: { person: 'partner', change: 5 }
+                            },
+                            {
+                                text: "Say you can't afford it right now",
+                                effects: { happiness: -5 },
+                                relationshipChange: { person: 'partner', change: -3 }
+                            }
+                        ]
+                    },
+                    {
+                        text: `You and ${this.character.partner.name} are having a serious conversation about your future together.`,
+                        choices: [
+                            {
+                                text: "Talk about moving in together",
+                                effects: { happiness: 10 },
+                                relationshipChange: { person: 'partner', change: 10 },
+                                special: 'moveInTogether'
+                            },
+                            {
+                                text: "Discuss getting married",
+                                effects: { happiness: 15 },
+                                relationshipChange: { person: 'partner', change: 15 },
+                                special: 'engagement'
+                            },
+                            {
+                                text: "Keep things casual for now",
+                                effects: { happiness: 5 },
+                                relationshipChange: { person: 'partner', change: 2 }
+                            }
+                        ]
+                    }
+                ];
+                
+                this.currentScenario = activities[Math.floor(Math.random() * activities.length)];
+                this.render();
+            }
+
+            doNightclub() {
+                this.currentScenario = {
+                    text: "You're at a crowded nightclub with loud music and flashing lights. Someone offers you a drink.",
+                    choices: [
+                        {
+                            text: "Accept the drink and party hard",
+                            effects: { happiness: 15, health: -8, money: -50 }
+                        },
+                        {
+                            text: "Buy your own drinks and dance",
+                            effects: { happiness: 10, health: -3, money: -80 }
+                        },
+                        {
+                            text: "Stay sober and just enjoy the music",
+                            effects: { happiness: 5, money: -20 }
+                        },
+                        {
+                            text: "Leave early - this isn't your scene",
+                            effects: { happiness: -3, money: -10 }
+                        }
+                    ]
+                };
+                this.render();
+            }
+
+            doCasino() {
+                if (this.character.money < 100) {
+                    this.showNotification("You don't have enough money to gamble!");
+                    return;
+                }
+                
+                this.currentScenario = {
+                    text: "You're in a casino with bright lights and the sound of slot machines. How much do you want to gamble?",
+                    choices: [
+                        {
+                            text: "Bet $100 on blackjack",
+                            effects: { money: Math.random() > 0.5 ? 150 : -100, happiness: 8 }
+                        },
+                        {
+                            text: "Bet $500 on roulette",
+                            effects: { money: Math.random() > 0.52 ? 900 : -500, happiness: 12 }
+                        },
+                        {
+                            text: "Play slot machines with $50",
+                            effects: { money: Math.random() > 0.7 ? 200 : -50, happiness: 5 }
+                        },
+                        {
+                            text: "Just enjoy the free drinks and leave",
+                            effects: { happiness: 3, money: -20 }
+                        }
+                    ]
+                };
+                this.render();
+            }
+
+            doCrime() {
+                const crimes = [
+                    {
+                        text: "You see an expensive phone left unattended on a park bench. No one is around.",
+                        choices: [
+                            {
+                                text: "Steal the phone",
+                                crime: "Theft",
+                                effects: { money: 300, happiness: -8 },
+                                catchChance: 0.3
+                            },
+                            {
+                                text: "Turn it in to the police",
+                                effects: { happiness: 12 }
+                            },
+                            {
+                                text: "Just walk away",
+                                effects: { happiness: 2 }
+                            }
+                        ]
+                    },
+                    {
+                        text: "A sketchy person approaches you and asks if you want to make easy money selling drugs.",
+                        choices: [
+                            {
+                                text: "Agree to sell drugs",
+                                crime: "Drug Dealing",
+                                effects: { money: 2000, happiness: -15 },
+                                catchChance: 0.4
+                            },
+                            {
+                                text: "Report them to the police",
+                                effects: { happiness: 15 }
+                            },
+                            {
+                                text: "Politely decline and walk away",
+                                effects: { happiness: 5 }
+                            }
+                        ]
+                    },
+                    {
+                        text: "You're in a store and realize you could easily shoplift something expensive.",
+                        choices: [
+                            {
+                                text: "Shoplift the item",
+                                crime: "Shoplifting",
+                                effects: { money: 150, happiness: -5 },
+                                catchChance: 0.35
+                            },
+                            {
+                                text: "Buy it legitimately",
+                                effects: { money: -150, happiness: 5 }
+                            },
+                            {
+                                text: "Leave the store empty-handed",
+                                effects: { happiness: 1 }
+                            }
+                        ]
+                    }
+                ];
+                
+                this.currentScenario = crimes[Math.floor(Math.random() * crimes.length)];
+                this.render();
+            }
+
+            makeChoice(choiceIndex) {
+                if (this.processing) return;
+                
+                this.processing = true;
+                const choice = this.currentScenario.choices[choiceIndex];
+                let resultText = choice.text;
+                
+                // Handle job applications
+                if (choice.job) {
+                    const success = Math.random() < 0.7; // 70% chance of getting the job
+                    if (success) {
+                        this.character.job = choice.job;
+                        this.character.jobTitle = choice.job.title;
+                        this.character.salary = choice.job.salary;
+                        resultText = `Congratulations! You got the job as a ${choice.job.title}!`;
+                        this.applyEffects({ happiness: 20, money: 100 });
+                    } else {
+                        resultText = `Unfortunately, you didn't get the ${choice.job.title} position.`;
+                        this.applyEffects({ happiness: -10 });
+                    }
+                }
+                
+                // Handle driving test
+                else if (choice.successChance !== undefined && this.currentScenario.text.includes("driving test")) {
+                    const success = Math.random() < choice.successChance;
+                    if (success) {
+                        this.character.hasLicense = true;
+                        resultText = "Congratulations! You passed your driving test and got your license!";
+                        this.applyEffects(choice.effects);
+                    } else {
+                        resultText = "You failed your driving test. You'll have to try again later.";
+                        this.applyEffects({ happiness: -15, money: -50 });
+                    }
+                }
+                
+                // Handle dating scenarios
+                else if (choice.successChance !== undefined && this.character.relationshipStatus === 'Single') {
+                    const success = Math.random() < choice.successChance;
+                    if (success) {
+                        resultText += " - They seem really interested in you!";
+                        this.applyEffects(choice.effects);
+                        
+                        // Chance to start dating
+                        if (Math.random() < 0.4) {
+                            this.character.relationshipStatus = 'Dating';
+                            this.character.partner = {
+                                name: this.generateRandomName(),
+                                age: this.character.age + this.randomBetween(-3, 3),
+                                relationship: this.randomBetween(60, 80)
+                            };
+                            this.character.relationships.set('partner', this.character.partner.relationship);
+                            resultText += " You're now dating!";
+                        }
+                    } else {
+                        resultText += " - They politely declined and walked away.";
+                        this.applyEffects({ happiness: -8 });
+                    }
+                }
+                
+                // Handle crime
+                else if (choice.crime) {
+                    const caught = Math.random() < choice.catchChance;
+                    if (caught) {
+                        this.character.criminalRecord.push({
+                            crime: choice.crime,
+                            age: this.character.age
+                        });
+                        resultText += " - But you got caught by the police!";
+                        this.applyEffects({ 
+                            happiness: -25, 
+                            money: choice.effects.money - 1000 
+                        });
+                    } else {
+                        resultText += " - You got away with it!";
+                        this.applyEffects(choice.effects);
+                    }
+                }
+                
+                // Handle special relationship events
+                else if (choice.special) {
+                    this.applyEffects(choice.effects);
+                    if (choice.relationshipChange) {
+                        this.updateRelationship(choice.relationshipChange.person, choice.relationshipChange.change);
+                    }
+                    
+                    if (choice.special === 'moveInTogether' && this.character.relationshipStatus === 'Dating') {
+                        this.character.relationshipStatus = 'Living Together';
+                        resultText += " You're now living together!";
+                    } else if (choice.special === 'engagement') {
+                        this.character.relationshipStatus = 'Engaged';
+                        resultText += " You're now engaged!";
+                    }
+                }
+                
+                // Handle normal choices
+                else {
+                    this.applyEffects(choice.effects);
+                    if (choice.relationshipChange) {
+                        this.updateRelationship(choice.relationshipChange.person, choice.relationshipChange.change);
+                    }
+                }
+                
+                this.showNotification(resultText);
+                this.currentScenario = null;
+                
+                setTimeout(() => {
+                    this.processing = false;
+                    this.render();
+                }, 2000);
+            }
+
+            generateRandomName() {
+                const names = [
+                    'Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Avery', 'Quinn',
+                    'Sam', 'Blake', 'Cameron', 'Dana', 'Jesse', 'Robin', 'Sage', 'Sky'
+                ];
+                return names[Math.floor(Math.random() * names.length)];
+            }
+
+            updateRelationship(person, change) {
+                const currentRelationship = this.character.relationships.get(person) || 50;
+                const newRelationship = Math.max(0, Math.min(100, currentRelationship + change));
+                this.character.relationships.set(person, newRelationship);
+                
+                if (person === 'mother') {
+                    this.character.parents.mother.relationship = newRelationship;
+                } else if (person === 'father') {
+                    this.character.parents.father.relationship = newRelationship;
+                } else if (person === 'partner' && this.character.partner) {
+                    this.character.partner.relationship = newRelationship;
+                }
+            }
+
+            applyEffects(effects) {
+                Object.keys(effects).forEach(stat => {
+                    if (this.character.hasOwnProperty(stat)) {
+                        this.character[stat] += effects[stat];
+                        
+                        // Clamp stats
+                        if (stat !== 'money') {
+                            this.character[stat] = Math.max(0, Math.min(100, this.character[stat]));
+                        } else {
+                            this.character[stat] = Math.max(0, this.character[stat]);
+                        }
+                    }
+                });
+            }
+
+            ageUp() {
+                if (this.processing || this.currentScenario) return;
+                
+                this.character.age++;
+                
+                // Apply aging effects
+                this.applyAgingEffects();
+                
+                // Check for major life events
+                this.checkMajorLifeEvents();
+                
+                // Check for death
+                if (this.checkDeath()) return;
+                
+                // Random events
+                if (Math.random() < 0.3) {
+                    this.triggerRandomEvent();
+                } else {
+                    this.render();
+                }
+            }
+
+            applyAgingEffects() {
+                // Natural aging
+                if (this.character.age > 30) {
+                    this.character.looks = Math.max(0, this.character.looks - this.randomBetween(0, 2));
+                }
+                
+                if (this.character.age > 50) {
+                    this.character.health = Math.max(0, this.character.health - this.randomBetween(1, 3));
+                    this.character.looks = Math.max(0, this.character.looks - this.randomBetween(1, 2));
+                }
+                
+                if (this.character.age > 70) {
+                    this.character.health = Math.max(0, this.character.health - this.randomBetween(2, 5));
+                    this.character.smarts = Math.max(0, this.character.smarts - this.randomBetween(0, 2));
+                }
+                
+                // Work income
+                if (this.character.job) {
+                    const yearlyIncome = this.character.salary * (0.7 + Math.random() * 0.3); // 70-100% of salary
+                    this.character.money += Math.floor(yearlyIncome);
+                }
+            }
+
+            checkMajorLifeEvents() {
+                // Education milestones
+                if (this.character.age === 18 && this.character.inSchool) {
+                    this.character.graduated = true;
+                    this.character.inSchool = false;
+                    this.character.education = 'High School';
+                    this.showNotification("You graduated from high school!");
+                }
+                
+                // College opportunity
+                if (this.character.age === 18 && this.character.graduated && this.character.smarts >= 60) {
+                    this.currentScenario = {
+                        text: "You've been accepted to college! Do you want to pursue higher education?",
+                        choices: [
+                            {
+                                text: "Go to college (4 years, $40,000)",
+                                effects: { money: -40000 },
+                                special: 'startCollege'
+                            },
+                            {
+                                text: "Enter the workforce instead",
+                                effects: { happiness: 5 }
+                            }
+                        ]
+                    };
+                    return;
+                }
+                
+                // College graduation
+                if (this.character.age === 22 && this.character.education === 'In College') {
+                    this.character.education = 'College';
+                    this.character.smarts += 20;
+                    this.character.smarts = Math.min(100, this.character.smarts);
+                    this.showNotification("You graduated from college with a degree!");
+                }
+                
+                // Parent aging and death
+                if (this.character.parents.mother.alive) {
+                    this.character.parents.mother.age++;
+                    if (this.character.parents.mother.age > 75 && Math.random() < 0.05) {
+                        this.character.parents.mother.alive = false;
+                        this.currentScenario = {
+                            text: `Your mother has passed away. This is a difficult time for you and your family.`,
+                            choices: [
+                                {
+                                    text: "Attend the funeral and grieve properly",
+                                    effects: { happiness: -20, money: -5000 }
+                                },
+                                {
+                                    text: "Try to stay strong for the family",
+                                    effects: { happiness: -15, smarts: 5 }
+                                }
+                            ]
+                        };
+                        return;
+                    }
+                }
+                
+                if (this.character.parents.father.alive) {
+                    this.character.parents.father.age++;
+                    if (this.character.parents.father.age > 75 && Math.random() < 0.05) {
+                        this.character.parents.father.alive = false;
+                        this.currentScenario = {
+                            text: `Your father has passed away. This is a difficult time for you and your family.`,
+                            choices: [
+                                {
+                                    text: "Attend the funeral and grieve properly",
+                                    effects: { happiness: -20, money: -5000 }
+                                },
+                                {
+                                    text: "Try to stay strong for the family",
+                                    effects: { happiness: -15, smarts: 5 }
+                                }
+                            ]
+                        };
+                        return;
+                    }
+                }
+            }
+
+            checkDeath() {
+                let deathChance = 0;
+                
+                // Age-based death chance
+                if (this.character.age > 80) {
+                    deathChance = (this.character.age - 80) * 0.08;
+                } else if (this.character.age > 60) {
+                    deathChance = (this.character.age - 60) * 0.02;
+                }
+                
+                // Health-based death chance
+                if (this.character.health < 10) {
+                    deathChance += 0.3;
+                } else if (this.character.health < 30) {
+                    deathChance += 0.1;
+                }
+                
+                // Random accidents
+                if (this.character.age > 16) {
+                    deathChance += 0.002;
+                }
+                
+                if (Math.random() < deathChance) {
+                    this.character.died = true;
+                    
+                    // Determine cause of death
+                    if (this.character.health < 30) {
+                        this.character.deathCause = "illness";
+                    } else if (this.character.age > 80) {
+                        this.character.deathCause = "old age";
+                    } else {
+                        const causes = ["car accident", "heart attack", "cancer", "stroke"];
+                        this.character.deathCause = causes[Math.floor(Math.random() * causes.length)];
+                    }
+                    
+                    this.render();
+                    return true;
+                }
+                
+                return false;
+            }
+
+            triggerRandomEvent() {
+                const events = [
+                    {
+                        text: "You found a wallet on the ground with $500 cash inside. There's an ID with an address.",
+                        choices: [
+                            {
+                                text: "Return the wallet to its owner",
+                                effects: { happiness: 15 }
+                            },
+                            {
+                                text: "Keep the money but return the wallet",
+                                effects: { money: 500, happiness: -5 }
+                            },
+                            {
+                                text: "Keep everything",
+                                effects: { money: 500, happiness: -12 }
+                            }
+                        ]
+                    },
+                    {
+                        text: "A relative you barely knew has died and left you money in their will.",
+                        choices: [
+                            {
+                                text: "Accept the inheritance",
+                                effects: { money: this.randomBetween(10000, 50000), happiness: 10 }
+                            },
+                            {
+                                text: "Donate the money to charity",
+                                effects: { happiness: 25 }
+                            }
+                        ]
+                    },
+                    {
+                        text: "You witness a hit-and-run accident. The victim is seriously injured.",
+                        choices: [
+                            {
+                                text: "Call 911 and stay to help",
+                                effects: { happiness: 15 }
+                            },
+                            {
+                                text: "Chase after the car that fled",
+                                effects: { happiness: 10, health: -5 }
+                            },
+                            {
+                                text: "Keep walking - it's not your problem",
+                                effects: { happiness: -10 }
+                            }
+                        ]
+                    }
+                ];
+                
+                this.currentScenario = events[Math.floor(Math.random() * events.length)];
+                this.render();
+            }
+
+            renderDeathScreen() {
+                const gameContent = document.getElementById('gameContent');
+                
+                gameContent.innerHTML = `
+                    <div class="death-screen">
+                        <div class="death-title">💀 Rest in Peace</div>
+                        <div class="death-details">
+                            <strong>${this.character.firstName} ${this.character.lastName}</strong><br>
+                            ${this.character.gender} • Age ${this.character.age}<br>
+                            Died of ${this.character.deathCause}
+                        </div>
+                        
+                        <div class="life-summary">
+                            <h3 style="color: #48bb78; margin-bottom: 15px;">Life Summary</h3>
+                            ${this.generateLifeSummary()}
+                            
+                            <div class="final-stats-grid">
+                                <div class="final-stat">
+                                    <div style="font-size: 12px; opacity: 0.7;">Final Happiness</div>
+                                    <div style="font-size: 16px; font-weight: bold;">${this.character.happiness}%</div>
+                                </div>
+                                <div class="final-stat">
+                                    <div style="font-size: 12px; opacity: 0.7;">Net Worth</div>
+                                    <div style="font-size: 16px; font-weight: bold;">${this.character.money.toLocaleString()}</div>
+                                </div>
+                                <div class="final-stat">
+                                    <div style="font-size: 12px; opacity: 0.7;">Education</div>
+                                    <div style="font-size: 16px; font-weight: bold;">${this.character.education}</div>
+                                </div>
+                                <div class="final-stat">
+                                    <div style="font-size: 12px; opacity: 0.7;">Career</div>
+                                    <div style="font-size: 16px; font-weight: bold;">${this.character.jobTitle || 'Unemployed'}</div>
+                                </div>
+                            </div>
+                            
+                            ${this.character.criminalRecord.length > 0 ? `
+                                <div class="criminal-record">
+                                    <strong>Criminal Record:</strong><br>
+                                    ${this.character.criminalRecord.map(crime => 
+                                        `• ${crime.crime} (Age ${crime.age})`
+                                    ).join('<br>')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <button class="restart-btn" onclick="game.restart()">Start New Life</button>
+                    </div>
+                `;
+            }
+
+            generateLifeSummary() {
+                let summary = `${this.character.firstName} `;
+                
+                if (this.character.happiness > 80) {
+                    summary += "lived an incredibly fulfilling and joyful life. ";
+                } else if (this.character.happiness > 60) {
+                    summary += "lived a generally happy and successful life. ";
+                } else if (this.character.happiness > 40) {
+                    summary += "lived a life with both struggles and triumphs. ";
+                } else {
+                    summary += "faced many hardships throughout their life. ";
+                }
+                
+                if (this.character.education === 'College' || this.character.education === 'University') {
+                    summary += "They achieved higher education ";
+                } else if (this.character.education === 'High School') {
+                    summary += "They completed their basic education ";
+                } else {
+                    summary += "They had limited formal education ";
+                }
+                
+                if (this.character.jobTitle) {
+                    summary += `and worked as a ${this.character.jobTitle}. `;
+                } else {
+                    summary += "but struggled to find stable employment. ";
+                }
+                
+                if (this.character.money > 500000) {
+                    summary += "They accumulated significant wealth ";
+                } else if (this.character.money > 100000) {
+                    summary += "They achieved financial stability ";
+                } else if (this.character.money > 10000) {
+                    summary += "They lived modestly ";
+                } else {
+                    summary += "They struggled financially ";
+                }
+                
+                summary += "during their lifetime. ";
+                
+                if (this.character.relationshipStatus !== 'Single') {
+                    summary += `They found love and were ${this.character.relationshipStatus.toLowerCase()}. `;
+                }
+                
+                if (this.character.criminalRecord.length > 0) {
+                    summary += "Unfortunately, they had some run-ins with the law. ";
+                }
+                
+                summary += `${this.character.firstName} will be remembered for their unique journey through life.`;
+                
+                return summary;
+            }
+
+            showNotification(message) {
+                // Remove existing notification
+                const existing = document.querySelector('.notification');
+                if (existing) existing.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3500);
+            }
+
+            restart() {
+                Object.assign(this.character, {
+                    firstName: '',
+                    lastName: '',
+                    age: 0,
+                    gender: '',
+                    happiness: 50,
+                    health: 100,
+                    smarts: 50,
+                    looks: 50,
+                    money: 0,
+                    job: null,
+                    jobTitle: '',
+                    salary: 0,
+                    education: 'None',
+                    relationshipStatus: 'Single',
+                    partner: null,
+                    children: [],
+                    parents: { mother: null, father: null },
+                    siblings: [],
+                    country: 'United States',
+                    city: 'New York',
+                    criminalRecord: [],
+                    achievements: [],
+                    died: false,
+                    deathCause: null,
+                    inSchool: true,
+                    graduated: false,
+                    hasLicense: false,
+                    relationships: new Map()
+                });
+                
+                this.currentScenario = null;
+                this.processing = false;
+                
+                this.init();
+            }
+        }
+
+        // Initialize the game
+        let game = new BitLifeGame();
+    </script>
+</body>
+</html>
